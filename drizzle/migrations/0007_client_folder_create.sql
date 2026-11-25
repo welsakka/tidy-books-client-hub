@@ -1,0 +1,2 @@
+CREATE POLICY folders_client_insert ON public.doc_folders FOR INSERT TO authenticated WITH CHECK(public.is_company_client(client_id));
+CREATE POLICY folders_client_update ON public.doc_folders FOR UPDATE TO authenticated USING(public.is_company_client(client_id)) WITH CHECK(public.is_company_client(client_id));

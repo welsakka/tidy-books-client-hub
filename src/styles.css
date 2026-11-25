@@ -1,0 +1,358 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Kenna's Empire design system.
+ * Money palette: deep ink-green chrome, gold primary actions,
+ * ivory work surfaces. Geist / Instrument Serif / Geist Mono.
+ * Motion: hover-lift, card-glow, shine, grid-lines, fade-up.
+ */
+
+@theme inline {
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Instrument Serif", Georgia, serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
+  --color-brass: var(--brass);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 0.5rem;
+  --background: oklch(0.972 0.007 95);
+  --foreground: oklch(0.2 0.035 160);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.2 0.035 160);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.2 0.035 160);
+  --primary: oklch(0.7 0.125 85);
+  --primary-foreground: oklch(0.17 0.04 160);
+  --secondary: oklch(0.935 0.01 100);
+  --secondary-foreground: oklch(0.22 0.035 160);
+  --muted: oklch(0.945 0.009 95);
+  --muted-foreground: oklch(0.47 0.02 165);
+  --accent: oklch(0.94 0.025 95);
+  --accent-foreground: oklch(0.22 0.035 160);
+  --destructive: oklch(0.55 0.19 27);
+  --destructive-foreground: oklch(0.98 0 0);
+  --success: oklch(0.56 0.12 158);
+  --success-foreground: oklch(0.98 0 0);
+  --warning: oklch(0.75 0.14 75);
+  --warning-foreground: oklch(0.24 0.04 70);
+  --info: oklch(0.5 0.09 230);
+  --info-foreground: oklch(0.98 0 0);
+  --ink: oklch(0.19 0.045 163);
+  --ink-foreground: oklch(0.94 0.012 95);
+  --brass: oklch(0.76 0.12 88);
+  --border: oklch(0.895 0.01 95);
+  --input: oklch(0.875 0.01 95);
+  --ring: oklch(0.7 0.125 85);
+  --chart-1: oklch(0.45 0.09 165);
+  --chart-2: oklch(0.72 0.12 85);
+  --chart-3: oklch(0.6 0.1 155);
+  --chart-4: oklch(0.62 0.13 30);
+  --chart-5: oklch(0.55 0.04 200);
+  --sidebar: oklch(0.19 0.045 163);
+  --sidebar-foreground: oklch(0.85 0.015 110);
+  --sidebar-primary: oklch(0.76 0.12 88);
+  --sidebar-primary-foreground: oklch(0.17 0.04 160);
+  --sidebar-accent: oklch(0.26 0.05 163);
+  --sidebar-accent-foreground: oklch(0.96 0.012 95);
+  --sidebar-border: oklch(0.28 0.04 163);
+  --sidebar-ring: oklch(0.76 0.12 88);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html {
+    font-family: var(--font-sans);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-size: 0.875rem;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background-color: color-mix(in oklab, var(--color-brass) 35%, transparent);
+  }
+}
+
+@utility num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+@utility wordmark {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+@utility surface {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--color-ink) 5%, transparent);
+}
+
+/* ---- Motion ---- */
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility animate-fade-up {
+  animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@utility hover-lift {
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+  &:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in oklab, var(--color-brass) 45%, var(--color-border));
+    box-shadow: 0 14px 30px -14px color-mix(in oklab, var(--color-ink) 30%, transparent);
+  }
+}
+
+@utility card-glow {
+  transition: box-shadow 0.35s ease;
+  &:hover {
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--color-brass) 45%, transparent),
+      0 18px 44px -18px color-mix(in oklab, var(--color-brass) 55%, transparent);
+  }
+}
+
+@utility shine {
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      color-mix(in oklab, var(--color-brass) 30%, transparent) 50%,
+      transparent 60%
+    );
+    transform: translateX(-110%);
+    transition: transform 0.7s ease;
+  }
+  &:hover::after {
+    transform: translateX(110%);
+  }
+}
+
+@utility grid-lines {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--color-ink-foreground) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--color-ink-foreground) 7%, transparent) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@utility animate-pulse-glow {
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+/* Slow drifting + breathing gold glows for the ink-green chrome. */
+@keyframes gold-drift {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate(-6%, 5%) scale(1.12);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(4%, -4%) scale(0.96);
+    opacity: 0.5;
+  }
+}
+
+@utility animate-gold-drift {
+  animation: gold-drift 14s ease-in-out infinite;
+}
+
+@utility animate-gold-drift-slow {
+  animation: gold-drift 22s ease-in-out infinite reverse;
+}
+
+@utility animate-gold-drift-fast {
+  animation: gold-drift 10s ease-in-out infinite;
+  animation-delay: -5s;
+}
+
+/* More homepage motion: panning grid, sweeping sheen, floating gold motes, growing hairline, breathing glow. */
+@keyframes grid-pan {
+  to {
+    background-position: 44px 44px;
+  }
+}
+
+@utility animate-grid-pan {
+  animation: grid-pan 24s linear infinite;
+}
+
+@keyframes shine-sweep {
+  0% {
+    transform: translateX(-110%);
+  }
+  14%,
+  100% {
+    transform: translateX(110%);
+  }
+}
+
+@utility shine-auto {
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      color-mix(in oklab, var(--color-brass) 25%, transparent) 50%,
+      transparent 60%
+    );
+    animation: shine-sweep 8s ease-in-out infinite;
+    animation-delay: 2.5s;
+  }
+}
+
+@keyframes float-dot {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.7;
+  }
+  85% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: translateY(-160px) scale(0.55);
+    opacity: 0;
+  }
+}
+
+@utility animate-float-dot {
+  animation: float-dot 9s ease-in-out infinite;
+}
+
+@keyframes line-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@utility animate-line-grow {
+  transform-origin: left;
+  animation: line-grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
+}
+
+@keyframes glow-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-brass) 0%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 26px 2px color-mix(in oklab, var(--color-brass) 45%, transparent);
+  }
+}
+
+@utility animate-glow-breathe {
+  animation: glow-breathe 5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-gold-drift,
+  .animate-gold-drift-slow,
+  .animate-gold-drift-fast,
+  .animate-grid-pan,
+  .shine-auto::after,
+  .animate-float-dot,
+  .animate-line-grow,
+  .animate-glow-breathe {
+    animation: none;
+  }
+}

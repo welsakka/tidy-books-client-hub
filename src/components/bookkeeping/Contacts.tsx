@@ -1,0 +1,23 @@
+import {useState} from 'react';
+import {useQuery,useQueryClient} from '@tanstack/react-query';
+import {toast} from 'sonner';
+import {Plus} from 'lucide-react';
+import {Button} from '@/components/ui/button';
+import {Badge} from '@/components/ui/badge';
+import {Checkbox} from '@/components/ui/checkbox';
+import {Tabs,TabsList,TabsTrigger} from '@/components/ui/tabs';
+import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogFooter} from '@/components/ui/dialog';
+import {Table,TableHeader,TableHead,TableBody,TableRow,TableCell} from '@/components/ui/table';
+import {ErrorBox,PageSkeleton,ScrollTable,Empty} from '@/components/common';
+import {supabase} from '@/integrations/supabase/client';
+import {bq,centsMoney} from '@/lib/bookkeeping';
+import type {Database} from '@/integrations/supabase/types';
+import {TextField} from './shared';
+import {useMe} from '@/lib/me-context';
+import {canWorkBooks} from '@/lib/constants';
+type Contact=Database['public']['Tables']['contacts']['Row'];
+export function Contacts({clientId}:{clientId:string}){const contacts=useQuery(bq.contacts(clientId)),journals=useQuery(bq.journals(clientId)),qc=useQueryClient(),me=useMe();const [kind,setKind]=useState('vendor'),[edit,setEdit]=useState<Partial<Contact>|null>(null);const can=canWorkBooks(me.role);
+ async function save(){if(!edit?.name)return;const payload={client_id:clientId,kind:edit.kind??kind,name:edit.name,email:edit.email??'',phone:edit.phone??'',address:edit.address??'',tin:edit.tin??'',is_1099:edit.is_1099??false,w9_on_file:edit.w9_on_file??false};const r=edit.id?await supabase.from('contacts').update(payload).eq('id',edit.id):await supabase.from('contacts').insert(payload);if(r.error)return toast.error(r.error.message);setEdit(null);qc.invalidateQueries({queryKey:['contacts',clientId]});toast.success('Contact saved');}
+ if(contacts.isLoading)return <PageSkeleton/>;if(contacts.error)return <ErrorBox error={contacts.error}/>;const rows=contacts.data?.filter(c=>c.kind===kind)??[];
+ return <div className="space-y-4"><div className="flex justify-between"><Tabs value={kind} onValueChange={setKind}><TabsList><TabsTrigger value="vendor">Vendors</TabsTrigger><TabsTrigger value="customer">Customers</TabsTrigger></TabsList></Tabs>{can&&<Button onClick={()=>setEdit({kind})}><Plus className="mr-2 size-4"/>Add {kind}</Button>}</div>{!rows.length?<Empty title={`No ${kind}s yet`}/>:<ScrollTable><Table><TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Email / phone</TableHead><TableHead>Address</TableHead>{kind==='vendor'&&<><TableHead>1099 / W-9</TableHead><TableHead className="text-right">YTD payments</TableHead></>}<TableHead>Status</TableHead></TableRow></TableHeader><TableBody>{rows.map(c=><TableRow key={c.id}><TableCell><Button variant="link" className="p-0" disabled={!can} onClick={()=>setEdit(c)}>{c.name}</Button></TableCell><TableCell>{c.email}<div className="text-xs text-muted-foreground">{c.phone}</div></TableCell><TableCell>{c.address||'—'}</TableCell>{kind==='vendor'&&<><TableCell>{c.is_1099?'1099 eligible':'—'}{c.w9_on_file&&<Badge className="ml-1" variant="success">W-9</Badge>}</TableCell><TableCell className="num text-right">{centsMoney((journals.data??[]).filter(e=>!e.voided&&e.entry_date.startsWith(new Date().getFullYear().toString())).flatMap(e=>e.journal_lines).filter(l=>l.contact_id===c.id).reduce((s,l)=>s+l.debit_cents,0))}</TableCell></>}<TableCell><Button size="sm" variant="ghost" disabled={!can} onClick={async()=>{const {error}=await supabase.from('contacts').update({is_active:!c.is_active}).eq('id',c.id);if(error)toast.error(error.message);else qc.invalidateQueries({queryKey:['contacts',clientId]});}}>{c.is_active?'Active':'Inactive'}</Button></TableCell></TableRow>)}</TableBody></Table></ScrollTable>}<Dialog open={!!edit} onOpenChange={o=>!o&&setEdit(null)}><DialogContent><DialogHeader><DialogTitle>{edit?.id?'Edit':'Add'} {kind}</DialogTitle></DialogHeader>{edit&&<div className="grid gap-3 sm:grid-cols-2">{(['name','email','phone','address','tin'] as const).map(k=><TextField key={k} label={k==='tin'?'Tax ID / TIN':k.charAt(0).toUpperCase()+k.slice(1)} value={edit[k]??''} onChange={v=>setEdit({...edit,[k]:v})}/>)}{kind==='vendor'&&<div className="space-y-3"><label className="flex items-center gap-2 text-sm"><Checkbox checked={edit.is_1099??false} onCheckedChange={v=>setEdit({...edit,is_1099:!!v})}/>1099 eligible</label><label className="flex items-center gap-2 text-sm"><Checkbox checked={edit.w9_on_file??false} onCheckedChange={v=>setEdit({...edit,w9_on_file:!!v})}/>W-9 on file</label></div>}</div>}<DialogFooter><Button disabled={!edit?.name} onClick={save}>Save contact</Button></DialogFooter></DialogContent></Dialog></div>
+}

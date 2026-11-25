@@ -1,0 +1,4 @@
+CREATE FUNCTION public.shares_firm(_user uuid) RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $$ SELECT EXISTS(SELECT 1 FROM public.firm_members a JOIN public.firm_members b ON a.firm_id=b.firm_id WHERE a.user_id=auth.uid() AND b.user_id=_user) OR EXISTS(SELECT 1 FROM public.client_access ca JOIN public.clients c ON c.id=ca.client_id JOIN public.firm_members m ON m.firm_id=c.firm_id WHERE ca.user_id=auth.uid() AND ca.status='approved' AND m.user_id=_user) $$;
+REVOKE ALL ON FUNCTION public.shares_firm(uuid) FROM PUBLIC,anon; GRANT EXECUTE ON FUNCTION public.shares_firm(uuid) TO authenticated;
+ALTER POLICY profiles_tenant ON public.profiles USING(id=auth.uid() OR (client_id IS NOT NULL AND (public.has_company_access(client_id) OR public.is_company_client(client_id))) OR public.shares_firm(id));
+CREATE POLICY profiles_firm_directory ON public.profiles FOR SELECT TO authenticated USING(public.shares_firm(id));
